@@ -263,3 +263,19 @@ a { color: inherit; }
 .ticker-item .amt { color: var(--good); font-weight: 500; }
 .bd-empty { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
 .bd-open-note { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-left: 3px; }
+
+/* ---- overflow containment ----
+   Grid and flex children default to min-width:auto, so a long unbroken string
+   (email, URL, long site address) pushes past its track and collides with the
+   next cell instead of wrapping. These three rules stop that everywhere it
+   can happen, rather than patching one screen at a time. */
+
+.fields > div { min-width: 0; }
+.fields .v,
+.fields .v a { overflow-wrap: anywhere; word-break: break-word; }
+
+.lrow > div, .qrow > div, .brow > div, .ticker-item > div, .row-name { min-width: 0; }
+.lrow .muted, .qrow .muted, .brow .muted { overflow-wrap: anywhere; }
+
+/* Keep the money/date column on one line — it should never be what wraps. */
+.lrow > div:last-child, .row-val { flex-shrink: 0; }
