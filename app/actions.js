@@ -71,6 +71,69 @@ export async function createLead(formData) {
   redirect(`/leads/${data.id}`);
 }
 
+export async function updateLead(formData) {
+  const { sb } = await ctx();
+  const id = String(formData.get('lead_id'));
+
+  const billing = String(formData.get('billing') || 'oneoff');
+  const amount = Number(formData.get('value_amount'));
+  const freq = billing === 'oneoff' ? 1 : Number(formData.get('value_freq')) || 1;
+
+  const patch = {
+    name: str(formData.get('name')),
+    site_address: str(formData.get('site_address')),
+    contact_name: str(formData.get('contact_name')),
+    contact_phone: str(formData.get('contact_phone')),
+    contact_email: str(formData.get('contact_email')),
+    source: str(formData.get('source')),
+    closes_at: str(formData.get('closes_at')),
+    pc_date: str(formData.get('pc_date')),
+    category_id: String(formData.get('category_id')),
+    billing,
+    value_freq: freq,
+  };
+
+  // Only overwrite the value if a number was actually supplied — an empty box
+  // should leave the quoted figure alone, not zero it.
+  if (!Number.isNaN(amount) && String(formData.get('value_amount')) !== '') {
+    patch.value_amount = amount;
+  }
+
+  const { error } = await sb.from('leads').update(patch).eq('id', id);
+
+  if (error) {
+    if (error.code === '23505') {
+      return { error: 'Another open lead already has that site address.' };
+    }
+    return { error: error.message };
+  }
+
+  revalidatePath(`/leads/${id}`);
+  revalidatePath('/board');
+  return { message: 'Saved.' };
+}
+
+export async function updateBuilder(formData) {
+  const { sb } = await ctx();
+  const id = String(formData.get('builder_id'));
+  const lead_id = String(formData.get('lead_id'));
+
+  const { error } = await sb
+    .from('lead_builders')
+    .update({
+      name: str(formData.get('name')),
+      contact_name: str(formData.get('contact_name')),
+      contact_email: str(formData.get('contact_email')),
+      contact_phone: str(formData.get('contact_phone')),
+    })
+    .eq('id', id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/leads/${lead_id}`);
+  return { message: 'Builder updated.' };
+}
+
 export async function logTouch(formData) {
   const { sb, me } = await ctx();
   const lead_id = String(formData.get('lead_id'));

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { supabaseServer } from '@/lib/supabase';
 import { money, relativeDays, shortDate, dateTime, daysBetween } from '@/lib/format';
 import LeadActions from './LeadActions';
+import EditLead from './EditLead';
 
 export const dynamic = 'force-dynamic';
 // Supabase runs on fetch, which Next caches by default. A CRM showing a
@@ -20,13 +21,14 @@ export default async function LeadPage({ params }) {
 
   if (!lead) notFound();
 
-  const [{ data: builders }, { data: touches }] = await Promise.all([
+  const [{ data: builders }, { data: touches }, { data: categories }] = await Promise.all([
     sb.from('lead_builders').select('*').eq('lead_id', lead.id).order('created_at'),
     sb
       .from('touchpoints')
       .select('*, app_users(display_name), lead_builders(name)')
       .eq('lead_id', lead.id)
       .order('created_at', { ascending: false }),
+    sb.from('categories').select('id, name').order('sort_order'),
   ]);
 
   const closed = lead.stage === 'won' || lead.stage === 'lost';
@@ -161,6 +163,8 @@ export default async function LeadPage({ params }) {
       )}
 
       {!closed && <LeadActions lead={lead} builders={builders ?? []} />}
+
+      <EditLead lead={lead} builders={builders ?? []} categories={categories ?? []} />
 
       <section>
         <div className="section-head">
