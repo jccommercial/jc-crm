@@ -134,31 +134,45 @@ export default async function Dashboard() {
                 <Ring pct={groupPct} target={groupTarget} state={state} label={g} closed={closed} />
                 <div className="breakdown">
                   {rows.map((r) => {
-                    const tally = r.show_as_tally || Number(r.closed) < tallyThreshold;
+                    const won = Number(r.won);
+                    const lost = Number(r.lost);
+                    const openN = Number(r.open);
+                    const closed = won + lost;
+                    const tally = r.show_as_tally || closed < tallyThreshold;
                     const rowPct = r.win_pct === null ? null : Number(r.win_pct);
                     const rowState = rowPct === null ? 'empty'
                       : rowPct >= r.win_target_pct ? 'good'
                       : rowPct >= r.win_target_pct * 0.7 ? 'warn' : 'bad';
+
                     return (
                       <div className="bd-row" data-state={rowState} key={r.category_id}>
                         <div>
                           <div className="bd-label">
-                            {r.name}{' '}
-                            {tally && <span className="pill flat">too few for a %</span>}
+                            {r.name}
+                            {/* Only worth saying when there's something to count. */}
+                            {tally && closed > 0 && (
+                              <span className="pill flat">too few for a %</span>
+                            )}
                           </div>
-                          {tally ? (
+
+                          {closed === 0 ? (
+                            // Nothing has closed. A row of dashes here looks like
+                            // data; a sentence says what's actually true.
+                            <div className="bd-empty">
+                              {openN > 0
+                                ? `nothing closed yet — ${openN} still open`
+                                : 'nothing quoted yet'}
+                            </div>
+                          ) : tally ? (
                             <div className="bd-tally">
-                              {Array.from({ length: Number(r.won) }).map((_, i) => (
+                              {Array.from({ length: won }).map((_, i) => (
                                 <span className="bd-box won" key={`w${i}`}>W</span>
                               ))}
-                              {Array.from({ length: Number(r.lost) }).map((_, i) => (
+                              {Array.from({ length: lost }).map((_, i) => (
                                 <span className="bd-box lost" key={`l${i}`}>L</span>
                               ))}
-                              {Array.from({ length: Math.min(Number(r.open), 12) }).map((_, i) => (
-                                <span className="bd-box open" key={`o${i}`}>·</span>
-                              ))}
-                              {Number(r.won) + Number(r.lost) + Number(r.open) === 0 && (
-                                <span className="muted">nothing yet</span>
+                              {openN > 0 && (
+                                <span className="bd-open-note">+{openN} open</span>
                               )}
                             </div>
                           ) : (
@@ -169,8 +183,8 @@ export default async function Dashboard() {
                           )}
                         </div>
                         <div className="bd-pct">
-                          {tally
-                            ? `${r.won}W ${r.lost}L`
+                          {closed === 0 ? <span className="muted">—</span>
+                            : tally ? `${won}W ${lost}L`
                             : `${rowPct}%`}
                         </div>
                       </div>

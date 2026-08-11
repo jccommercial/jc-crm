@@ -261,3 +261,5 @@ a { color: inherit; }
 .ticker-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 15px; font-size: 13px; }
 .ticker-item + .ticker-item { border-top: 1px solid var(--line); }
 .ticker-item .amt { color: var(--good); font-weight: 500; }
+.bd-empty { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+.bd-open-note { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-left: 3px; }
