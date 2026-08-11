@@ -68,7 +68,8 @@ export default async function AdminPage() {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 600, fontSize: 13.5 }}>{l.name}</div>
                 <div className="muted">
-                  {l.category} &middot; {l.owner ?? 'unassigned'} &middot; {shortDate(l.closed_at)}
+                  {[l.category, l.owner ?? 'unassigned', shortDate(l.closed_at) ?? 'date not recorded']
+                    .join(' · ')}
                 </div>
                 {l.lost_note && (
                   <div className="muted" style={{ marginTop: 3 }}>{l.lost_note}</div>
