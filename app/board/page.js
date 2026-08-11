@@ -61,6 +61,9 @@ export default async function Board() {
           <Link className="btn small" href="/leads/new">
             + New lead
           </Link>
+          <Link className="btn ghost small" href="/dashboard">
+            Dashboard
+          </Link>
           {me.role === 'admin' && (
             <Link className="btn ghost small" href="/admin">
               Admin

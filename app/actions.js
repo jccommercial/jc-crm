@@ -225,6 +225,30 @@ export async function setUserActive(formData) {
   return { message: active ? 'Access restored.' : 'Access removed. Their leads stay put.' };
 }
 
+export async function saveSpend(formData) {
+  const { sb, me } = await ctx();
+  if (me.role !== 'admin') return { error: 'Admins only.' };
+
+  const month = String(formData.get('month') || '').slice(0, 7);
+  if (!/^\d{4}-\d{2}$/.test(month)) return { error: 'Pick a month.' };
+
+  const row = {
+    month: `${month}-01`,
+    channel: String(formData.get('channel') || '').trim(),
+    spend: Number(formData.get('spend')) || 0,
+    clicks: Number(formData.get('clicks')) || 0,
+    source: 'manual',
+  };
+  if (!row.channel) return { error: 'Which channel?' };
+
+  const { error } = await sb.from('channel_spend').upsert(row, { onConflict: 'month,channel' });
+  if (error) return { error: error.message };
+
+  revalidatePath('/admin');
+  revalidatePath('/dashboard');
+  return { message: `${row.channel} saved for ${month}.` };
+}
+
 export async function signOut() {
   const sb = supabaseServer();
   await sb.auth.signOut();

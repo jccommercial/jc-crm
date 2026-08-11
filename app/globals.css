@@ -177,3 +177,87 @@ a { color: inherit; }
 .tl { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 12.5px; padding: 6px 0; }
 .tl time { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 .tl span { color: var(--ink-soft); }
+
+/* ---- dashboard ---- */
+
+.teambar { padding: 18px 20px; display: flex; flex-direction: column; gap: 11px; }
+.teambar.hit { border-color: var(--good); box-shadow: 0 0 0 1px var(--good), 0 6px 34px -14px var(--good-glow); }
+.teambar-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; }
+.teambar-figure { display: flex; align-items: baseline; gap: 10px; }
+.teambar-figure .big { font-size: clamp(28px, 6vw, 42px); font-weight: 500; line-height: 1; }
+.teambar-figure .of { color: var(--ink-faint); font-size: 14px; }
+.track { height: 12px; background: var(--panel-sunk); border-radius: 2px; overflow: hidden; display: flex; }
+.track span { display: block; height: 100%; background: var(--good); }
+.track span + span { opacity: 0.62; }
+.track span + span + span { opacity: 0.4; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { padding: 15px; display: flex; flex-direction: column; gap: 7px; }
+.tile-figure { font-size: 29px; font-weight: 500; line-height: 1.05; }
+.tile-sub { font-size: 12px; color: var(--ink-soft); }
+.tile[data-state='good'] {
+  background: linear-gradient(180deg, var(--good-lift), var(--panel) 62%);
+  border-color: var(--good); box-shadow: 0 5px 28px -16px var(--good-glow);
+}
+.tile[data-state='good'] .tile-figure { color: var(--good); }
+.tile[data-state='bad'] { border-color: var(--bad); }
+.tile[data-state='bad'] .tile-figure { color: var(--bad); }
+.tile[data-state='empty'] .tile-figure { color: var(--ink-faint); }
+
+.split-wr { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .split-wr { grid-template-columns: 1fr; } }
+
+.wr-card { display: flex; flex-direction: column; }
+.ring-cell { padding: 16px 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.ring { position: relative; width: 108px; height: 108px; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track { stroke: var(--panel-sunk); }
+.ring-fill { stroke-linecap: butt; stroke: var(--ink-faint); }
+.ring-cell[data-state='good'] .ring-fill { stroke: var(--good); }
+.ring-cell[data-state='warn'] .ring-fill { stroke: var(--warn); }
+.ring-cell[data-state='bad'] .ring-fill { stroke: var(--bad); }
+.ring-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-mid .pct { font-size: 24px; font-weight: 500; line-height: 1; }
+.ring-cell[data-state='good'] .pct { color: var(--good); }
+.ring-cell[data-state='warn'] .pct { color: var(--warn); }
+.ring-cell[data-state='bad'] .pct { color: var(--bad); }
+.ring-mid .tgt { font-family: var(--mono); font-size: 9.5px; color: var(--ink-faint); letter-spacing: 0.06em; }
+.ring-label { font-size: 13px; font-weight: 600; }
+.ring-note { font-size: 11.5px; color: var(--ink-faint); }
+
+.breakdown { border-top: 1px solid var(--line); padding: 12px 15px 14px; display: flex; flex-direction: column; gap: 11px; }
+.bd-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+.bd-label { font-size: 12.5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.bd-track { position: relative; height: 7px; background: var(--panel-sunk); border-radius: 2px; margin-top: 5px; }
+.bd-track i { display: block; height: 100%; border-radius: 2px; background: var(--ink-faint); }
+.bd-track u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); opacity: 0.55; }
+.bd-row[data-state='good'] .bd-track i { background: var(--good); }
+.bd-row[data-state='warn'] .bd-track i { background: var(--warn); }
+.bd-row[data-state='bad'] .bd-track i { background: var(--bad); }
+.bd-pct { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bd-row[data-state='good'] .bd-pct { color: var(--good); }
+.bd-row[data-state='bad'] .bd-pct { color: var(--bad); }
+.bd-tally { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+.bd-box { width: 19px; height: 19px; border-radius: 2px; border: 1px solid var(--line-strong); background: var(--panel-sunk); display: grid; place-items: center; font-family: var(--mono); font-size: 9px; color: var(--ink-faint); }
+.bd-box.won { background: var(--good); border-color: var(--good); color: var(--on-accent); }
+.bd-box.open { border-style: dashed; }
+
+.row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 12px; padding: 12px 15px; position: relative; }
+.row + .row { border-top: 1px solid var(--line); }
+.row-rank { font-family: var(--mono); font-size: 13px; color: var(--ink-faint); text-align: right; }
+.row-name { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.row-name strong { font-size: 14px; font-weight: 600; }
+.row-bar { height: 6px; background: var(--panel-sunk); border-radius: 2px; overflow: hidden; }
+.row-bar i { display: block; height: 100%; background: var(--ink-soft); }
+.row-val { text-align: right; display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+.row-val .money { font-size: 18px; font-weight: 500; }
+.row-val .wins { font-size: 11px; color: var(--ink-faint); }
+.row.lead { background: linear-gradient(90deg, var(--gold-lift), transparent 72%); }
+.row.lead .row-rank { color: var(--gold); font-weight: 700; }
+.row.lead .row-bar i { background: var(--gold); }
+.row.lead .row-val .money { color: var(--gold); }
+.row.lead::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--gold); }
+
+.ticker-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 15px; font-size: 13px; }
+.ticker-item + .ticker-item { border-top: 1px solid var(--line); }
+.ticker-item .amt { color: var(--good); font-weight: 500; }
